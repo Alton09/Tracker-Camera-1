@@ -20,6 +20,13 @@ public class CameraRecorder {
     }
 
     /**
+     * Displays a FileNameDialog to the user.
+     */
+    public void displayFileNameDialog() {
+        
+    }
+
+    /**
      * Gets the camera resource from the Android system.
      */
     public void acquireCameraResource() {

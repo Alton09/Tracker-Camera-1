@@ -35,8 +35,7 @@ public class VideoActivityTest extends BaseTest {
     public void tempTest() {
         // Run method under test
         try {
-            Mockito.when(cameraRecorder.toString()).thenReturn("YAY!!!");
-            Whitebox.invokeMethod(videoActivity, "recordButtonListenerTemp", cameraRecorder);
+            Whitebox.invokeMethod(videoActivity, "recordButtonListenerTemp");
         } catch (Exception e) {
             Assert.fail(UNIT_TEST_SETUP_ERROR + e.getMessage());
         }
