@@ -13,6 +13,11 @@ import android.media.MediaRecorder;
 public class CameraRecorder {
     private Camera camera;
     private MediaRecorder mediaRecorder;
+    private VideoActivity activity;
+
+    public CameraRecorder(VideoActivity activity) {
+        this.activity = activity;
+    }
 
     /**
      * Gets the camera resource from the Android system.

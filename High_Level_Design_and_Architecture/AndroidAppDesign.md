@@ -273,7 +273,6 @@ The system follows a Model View Controller (MVC) Design Architecture. The MVC ar
 	<tr><td>Issues</td> <td>N/A</td> </tr>
 </table>
 ### 1.5 Editing/Sharing
-TODO
 
 ### 1.6 Tracking Calibration
 <table> 

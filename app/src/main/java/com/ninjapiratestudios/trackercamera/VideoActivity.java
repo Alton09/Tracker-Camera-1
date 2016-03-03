@@ -46,7 +46,6 @@ public class VideoActivity extends Activity { // implements TextureView.SurfaceT
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_full_video);
 
         //captureCamera();
@@ -64,6 +63,10 @@ public class VideoActivity extends Activity { // implements TextureView.SurfaceT
         //preview = (FrameLayout) findViewById(R.id.camera_preview);
         //preview.addView(glCamView);
         setContentView(glCamView);
+
+        // TODO Temporary! Move recording functionality once CameraFragment component is finished
+        recordButtonListenerTemp(new CameraRecorder(this));
+
         //mediaRecorder = new MediaRecorder();
         //mediaRecorder.setCamera(camera);
         //mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
@@ -173,6 +176,11 @@ public class VideoActivity extends Activity { // implements TextureView.SurfaceT
         }
 
         return mediaFile;
+    }
+
+    // TODO Temporary! Move recording functionality once CameraFragment component is finished
+    private void recordButtonListenerTemp(CameraRecorder cameraRecorder) {
+        String str = cameraRecorder.toString();
     }
 
     /*@Override
