@@ -23,7 +23,8 @@ public class CameraRecorder {
      * Displays a FileNameDialog to the user.
      */
     public void displayFileNameDialog() {
-        
+        FileNameDialog dialog = new FileNameDialog();
+        dialog.show(activity.getFragmentManager(), dialog.FRAGMENT_TAG);
     }
 
     /**

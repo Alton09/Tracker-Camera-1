@@ -178,9 +178,10 @@ public class VideoActivity extends Activity { // implements TextureView.SurfaceT
         return mediaFile;
     }
 
-    // TODO Temporary! Move recording functionality once CameraFragment component is finished
+    // TODO Remove once CameraFragment component is finished
     private void recordButtonListenerTemp() {
         CameraRecorder cameraRecorder = new CameraRecorder(this);
+        cameraRecorder.displayFileNameDialog();
     }
 
     /*@Override

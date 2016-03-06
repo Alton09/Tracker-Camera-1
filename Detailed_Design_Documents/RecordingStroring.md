@@ -30,7 +30,9 @@ John Qualls
 5. **Stop Button Press** - The component will follow the stop and release resources steps specified in the [Google guide document.](http://developer.android.com/guide/topics/media/camera.html#capture-video) 
 
 ## 3.1 View Component
-**fragment_file_name_dialog.xml** - An XML file will need to be included in the res folder in order to configure the view that will be displayed for the user file name choice flow. 
+**fragment_file_name_dialog.xml** - An XML file will need to be included in the res folder in order to configure the view that will be displayed for the user file name choice flow. The view uses the *android.R.style.Theme_Holo_Dialog*
+
+![](https://media.taiga.io/attachments/5/2/d/7/03121b952246afef543262545d1494c2f656beb8e6ebc85dd5d428cf404c/recording_storing_dialog.png) 
 
 ## 3.2 Model Component
 **File Directory** - The recorded files will be added to the Environment.DIRECTORY_DCIM directory if an external SD card does not exist, otherwise, the Environment.DIRECTORY_PICTURES will be used. A sub directory named tracker_camera will be created to help separate other app videos.
@@ -42,11 +44,9 @@ John Qualls
 
 ## 3.4 Life Cycle Callback Handling
 ### CameraFragment Life Cycle
-**onCreate()** - Initializes the CameraRecorder object.
+**VideoActivity.onCreate()** - Initializes the CameraRecorder object.
 
-**onStop()** - If a video is recording, it is stopped.
-
-### FileNameDialog Life Cycle
+**VideoActivity.onStop()** - If a video is recording, recording process must safely halt and close all camera resource.
 
 ## 3.5 Exception Handling
 **Error Saving File** - If there was an error saving the file to the designated output path, then return the user to the dialog with an error message, instructing them to try again or choose a different name.
@@ -57,8 +57,9 @@ John Qualls
 **Test Driven Development(TDD)** - TDD with JUnit, Mockito, and PowerMockito will be followed in order to provide high quality code and test coverage.
 
 ## 5. References
-* **Fragment Lifecycle** - [http://developer.android.com/guide/components/fragments.html#Lifecycle](http://developer.android.com/guide/components/fragments.html#Lifecycle)
-* **DialogFragment Blog** - [http://android-developers.blogspot.com/2012/05/using-dialogfragments.html](http://android-developers.blogspot.com/2012/05/using-dialogfragments.html)
+* **Fragment Lifecycle** - [http://developer.android.com/reference/android/app/DialogFragment.html#Lifecycle](http://developer.android.com/reference/android/app/DialogFragment.html#Lifecycle)
+* **DialogFragment Guide** - [http://developer.android.com/reference/android/app/DialogFragment.html](http://developer.android.com/reference/android/app/DialogFragment.html)
+* **DialogFragment Guide2** - [http://www.androidbegin.com/tutorial/android-dialogfragment-tutorial/](http://www.androidbegin.com/tutorial/android-dialogfragment-tutorial/)
 * **Google API Camera Guide** - [http://developer.android.com/guide/topics/media/camera.html#capture-video](http://developer.android.com/guide/topics/media/camera.html#capture-video)
 * **Google API Saving Media Files Guide** - [http://developer.android.com/guide/topics/media/camera.html#saving-media](http://developer.android.com/guide/topics/media/camera.html#saving-media)
 * **Google API Storage Options Guide** - [http://developer.android.com/guide/topics/data/data-storage.html](http://developer.android.com/guide/topics/data/data-storage.html)
