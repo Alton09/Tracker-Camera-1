@@ -2,7 +2,9 @@ package com.ninjapiratestudios.trackercamera;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -29,7 +31,7 @@ import java.util.Date;
  * status bar and navigation/system bar) with user interaction.
  */
 public class VideoActivity extends Activity { // implements TextureView.SurfaceTextureListener{
-
+    public final static String LOG_TAG = "VIDEO_ACTIVITY";
     Camera camera;
     //CamPreview camPreview;
     GLCamView glCamView;

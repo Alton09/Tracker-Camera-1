@@ -24,7 +24,7 @@ public class CameraRecorder {
      */
     public void displayFileNameDialog() {
         FileNameDialog dialog = new FileNameDialog();
-        dialog.show(activity.getFragmentManager(), dialog.FRAGMENT_TAG);
+        dialog.show(activity.getFragmentManager(), FileNameDialog.FRAGMENT_TAG);
     }
 
     /**

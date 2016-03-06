@@ -12,4 +12,6 @@ public class BaseTest {
             "executing the method under test: ";
     protected final String UNIT_TEST_EXECUTE_ERROR = "The test either failed," +
             " or there was an error while executing the test: ";
+    protected final String UNIT_TEST_BEFORE_ERROR = "Error in @Before setup " +
+            "method: ";
 }

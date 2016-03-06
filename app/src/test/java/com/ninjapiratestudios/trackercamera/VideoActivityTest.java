@@ -37,7 +37,7 @@ public class VideoActivityTest extends BaseTest {
         try {
             Whitebox.invokeMethod(videoActivity, "recordButtonListenerTemp");
         } catch (Exception e) {
-            Assert.fail(UNIT_TEST_SETUP_ERROR + e.getMessage());
+            Assert.fail(UNIT_TEST_SUT_ERROR + e.getMessage());
         }
     }
 }
