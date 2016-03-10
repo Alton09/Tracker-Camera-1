@@ -66,7 +66,7 @@ public class VideoActivity extends Activity { // implements TextureView.SurfaceT
         //preview.addView(glCamView);
         setContentView(glCamView);
 
-        // TODO Temporary! Move recording functionality once CameraFragment component is finished
+        // TODO Temporary! Remove once CameraFragment component is finished
         recordButtonListenerTemp();
 
         //mediaRecorder = new MediaRecorder();

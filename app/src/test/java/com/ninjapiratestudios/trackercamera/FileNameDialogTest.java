@@ -77,7 +77,7 @@ public class FileNameDialogTest extends BaseTest {
     }
 
     @Test
-    public void correctButtonListenersTest() {
+    public void correctDialogLayoutTest() {
         LayoutInflater inflater = Mockito.mock(LayoutInflater.class);
         ViewGroup container = Mockito.mock(ViewGroup.class);
         View view = Mockito.mock(View.class);
