@@ -21,6 +21,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+
+import com.ninjapiratestudios.trackercamera.FileNameDialog.*;
+
 import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -38,6 +41,11 @@ import java.util.regex.Matcher;
 @RunWith(PowerMockRunner.class)
 public class FileNameDialogTest extends BaseTest {
     private FileNameDialog dialog;
+
+    private enum TestName {
+        LAYOUT,
+        LISTENERS;
+    }
 
     @Before
     public void setup() {
@@ -78,17 +86,30 @@ public class FileNameDialogTest extends BaseTest {
 
     @Test
     public void correctDialogLayoutTest() {
+        onCreateViewTests(TestName.LAYOUT);
+    }
+
+    @Test
+    public void correctListenersSetTest() {
+        onCreateViewTests(TestName.LISTENERS);
+    }
+
+    /**
+     * Helper method to run tests that are within the onCreateView method.
+     */
+    private void onCreateViewTests(TestName testName) {
         LayoutInflater inflater = Mockito.mock(LayoutInflater.class);
         ViewGroup container = Mockito.mock(ViewGroup.class);
         View view = Mockito.mock(View.class);
+        ButtonClick listener = Mockito.mock(ButtonClick.class);
 
         // Test setup
         try {
             Mockito.when(inflater.inflate(anyInt(), any(ViewGroup.class),
                     anyBoolean())).thenReturn(view);
             Mockito.when(view.findViewById(anyInt())).thenReturn(view);
-            PowerMockito.whenNew(FileNameDialog.ButtonClick.class)
-                    .withNoArguments().thenReturn(null);
+            PowerMockito.whenNew(ButtonClick.class)
+                    .withNoArguments().thenReturn(listener);
         } catch (Exception e) {
             Assert.fail(UNIT_TEST_SETUP_ERROR + e.getMessage());
         }
@@ -103,8 +124,15 @@ public class FileNameDialogTest extends BaseTest {
 
         // Run test
         try {
-            Mockito.verify(inflater).inflate(R.layout.fragment_file_name_dialog,
-                    container, false);
+            if (TestName.LAYOUT == testName) {
+                Mockito.verify(inflater).inflate(R.layout
+                        .fragment_file_name_dialog, container, false);
+            } else if (TestName.LISTENERS == testName) {
+                Mockito.verify(view).findViewById(R.id.fn_dialog_save_button);
+                Mockito.verify(view).findViewById(R.id.fn_dialog_cancel_button);
+                Mockito.verify(view, Mockito.times(2)).setOnClickListener
+                        (listener);
+            }
         } catch (Exception e) {
             Assert.fail(UNIT_TEST_EXECUTE_ERROR + e.getMessage());
         }
