@@ -29,6 +29,7 @@ import javax.microedition.khronos.opengles.GL10;
  */
 public class GLCamView extends GLSurfaceView implements SurfaceTexture.OnFrameAvailableListener {
 
+    private CameraRecorder cameraRecorder;
     GLRenderer renderer;
     public static final int REGULAR_VIEW = 0;
     public static final int TRACKING_VIEW = 1;
@@ -43,8 +44,9 @@ public class GLCamView extends GLSurfaceView implements SurfaceTexture.OnFrameAv
     float[] colorSelected = new float[4];
     float threshold = 0.2f;
 
-    GLCamView(Context c) {
+    GLCamView(Context c, CameraRecorder cameraRecorder) {
         super(c);
+        this.cameraRecorder = cameraRecorder;
         renderer = new GLRenderer(this);
         setEGLContextClientVersion(2);
         setEGLConfigChooser(8, 8, 8, 8, 0, 0);
@@ -102,9 +104,7 @@ public class GLCamView extends GLSurfaceView implements SurfaceTexture.OnFrameAv
     public class GLRenderer implements GLSurfaceView.Renderer {
 
         GLCamView glCamView;
-        Camera camera;
         private SurfaceTexture surfaceTexture;
-        Camera.Size previewSize;
 
         float[] transformMatrix;
         float[] viewMatrix;
@@ -161,7 +161,6 @@ public class GLCamView extends GLSurfaceView implements SurfaceTexture.OnFrameAv
 
         public void release() {
             surfaceTexture.release();
-            camera.stopPreview();
             GLES20.glDeleteTextures(1, textureHandle, 0);
         }
 
@@ -191,20 +190,17 @@ public class GLCamView extends GLSurfaceView implements SurfaceTexture.OnFrameAv
 
             textureHandle = new int[1];
             GLES20.glGenTextures(1, textureHandle, 0);
-            GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, textureHandle[0]);
-            GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+            GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,
+                    textureHandle[0]);
+            GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20
+                    .GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
             GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
             GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
             GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
             surfaceTexture = new SurfaceTexture(textureHandle[0]);
             surfaceTexture.setOnFrameAvailableListener(glCamView);
 
-            camera = Camera.open();
-            try {
-                camera.setPreviewTexture(surfaceTexture);
-            } catch (IOException e) {
-                throw new RuntimeException("Error setting camera preview to texture.");
-            }
+            cameraRecorder.cameraPreviewSetup(surfaceTexture);
 
             GLES20.glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
@@ -229,14 +225,12 @@ public class GLCamView extends GLSurfaceView implements SurfaceTexture.OnFrameAv
             final float far = 10.0f;
 
             projectionMatrix = new float[16];
-            Matrix.frustumM(projectionMatrix, 0, left, right, bottom, top, near, far);
+            Matrix.frustumM(projectionMatrix, 0, left, right, bottom, top,
+                    near, far);
 
-            previewSize = camera.getParameters().getPreviewSize();
-            Camera.Parameters param = camera.getParameters();
-            param.setPictureSize(previewSize.width, previewSize.height);
-            param.set("orientation", "landscape");
-            camera.setParameters(param);
-            camera.startPreview();
+            cameraRecorder.updatePreview();
+
+            Camera.Size previewSize = cameraRecorder.getPreviewSize();
             xRatio = previewSize.width / screenWidth;
             yRatio = previewSize.height / screenHeight;
         }
@@ -523,6 +517,7 @@ public class GLCamView extends GLSurfaceView implements SurfaceTexture.OnFrameAv
             float colPointX = xChoice * xRatio;
             float colPointY = yChoice * yRatio;
             int pixel = (int) (xChoice * xRatio * yChoice * yRatio);
+            Camera.Size previewSize = cameraRecorder.getPreviewSize();
             System.out.println("Cam texture: " + previewSize.width + ", " + previewSize.height);
 
             ByteBuffer buff = ByteBuffer.allocateDirect(4);

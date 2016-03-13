@@ -5,31 +5,23 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+
+import com.ninjapiratestudios.trackercamera.FileNameDialog.ButtonClick;
 
 import junit.framework.Assert;
 
-import org.junit.runner.RunWith;
-
-import static org.mockito.Matchers.*;
-
-import org.mockito.Spy;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-
-import com.ninjapiratestudios.trackercamera.FileNameDialog.*;
-
 import org.mockito.Mockito;
-import org.powermock.reflect.Whitebox;
+import org.powermock.api.mockito.PowerMockito;
+import static org.mockito.Mockito.times;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.regex.Matcher;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
 
 /**
  * Unit tests for FileNameDialog.java.
@@ -130,7 +122,7 @@ public class FileNameDialogTest extends BaseTest {
             } else if (TestName.LISTENERS == testName) {
                 Mockito.verify(view).findViewById(R.id.fn_dialog_save_button);
                 Mockito.verify(view).findViewById(R.id.fn_dialog_cancel_button);
-                Mockito.verify(view, Mockito.times(2)).setOnClickListener
+                Mockito.verify(view, times(2)).setOnClickListener
                         (listener);
             }
         } catch (Exception e) {
