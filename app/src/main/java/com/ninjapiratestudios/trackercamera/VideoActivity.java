@@ -27,13 +27,14 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class VideoActivity extends Activity { // implements TextureView
-// .SurfaceTextureListener{
+    // .SurfaceTextureListener{
     private CameraRecorder cameraRecorder;
     public final static String LOG_TAG = "VIDEO_ACTIVITY";
     private Camera camera;

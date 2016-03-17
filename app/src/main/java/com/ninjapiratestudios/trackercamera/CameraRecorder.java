@@ -12,6 +12,7 @@ import android.view.Surface;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * This class will be used to provide an object that will handle all
@@ -108,11 +109,11 @@ public class CameraRecorder {
         mediaRecorder.setCamera(camera);
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
-//        mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile
-//                .QUALITY_HIGH));
+//        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+//        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+//        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
+        mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile
+                .QUALITY_HIGH));
         Log.i(LOG_TAG, "Camera configurations are set.");
         // Internal Directory
 //        File filesDir = activity.getDir("files", Context
@@ -120,11 +121,14 @@ public class CameraRecorder {
         //External directory
         File filesDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), "Tracker_Camera");
-        if(!filesDir.exists()) {
+        if (!filesDir.exists()) {
             filesDir.mkdir();
         }
+
         File videoFile = new File(filesDir.getPath(), "TestVideo.mp4");
         mediaRecorder.setOutputFile(videoFile.toString());
+        mediaRecorder.setVideoSize(cameraPreview.getWidth(), cameraPreview
+                .getHeight());
         mediaRecorder.setPreviewDisplay(cameraPreview.getHolder().getSurface());
         Log.i(LOG_TAG, "File saved to: " + videoFile.getPath());
 
