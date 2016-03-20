@@ -8,7 +8,7 @@ import android.view.SurfaceView;
 
 import java.io.IOException;
 
-/** A basic Camera preview class */
+// TODO Temporary preview class until josh's component is finished
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     public final static String LOG_TAG = "CAMERA_PREVIEW";
     private SurfaceHolder mHolder;

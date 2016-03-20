@@ -51,21 +51,14 @@ public class VideoActivity extends Activity { // implements TextureView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
+    }
 
-        camera = Camera.open();
-
-        // Create our Preview view and set it as the content of our activity.
-        cameraPreview = new CameraPreview(this, camera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(cameraPreview);
-
-        cameraRecorder = new CameraRecorder(this, camera,
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Use CameraRecorder reference to handle camera functionality
+        cameraRecorder = new CameraRecorder(this,
                 cameraPreview);
-
-//        cameraRecorder = new CameraRecorder(this);
-//        glCamView = new GLCamView(this, cameraRecorder);
-//        overlay = new Overlay(this);
-//        setContentView(glCamView);
 
         recordButtonListenerTemp();
     }

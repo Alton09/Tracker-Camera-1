@@ -8,6 +8,7 @@ import android.media.MediaRecorder;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Surface;
+import android.widget.FrameLayout;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -23,6 +24,7 @@ import java.util.List;
  */
 public class CameraRecorder {
     public final static String LOG_TAG = "CAMERA_RECORDER";
+    public final static String FILE_DIRECTORY = "Tracker_Camera";
     private Camera camera;
     private CameraPreview cameraPreview;
     private MediaRecorder mediaRecorder;
@@ -30,24 +32,27 @@ public class CameraRecorder {
     private Camera.Size previewSize;
     private SurfaceTexture surfaceTexture;
 
-    public CameraRecorder(VideoActivity activity, Camera camera,
-                          CameraPreview cameraPreview) {
+    public CameraRecorder(VideoActivity activity, CameraPreview cameraPreview) {
         this.activity = activity;
-        this.camera = camera;
         this.cameraPreview = cameraPreview;
+
+        // Get camera reference and start camera preview
+
     }
 
-    public void cameraPreviewSetup(SurfaceTexture surfaceTexture) {
-        this.surfaceTexture = surfaceTexture;
-        camera = Camera.open();
-        try {
-            camera.setPreviewTexture(surfaceTexture);
-        } catch (IOException e) {
-            throw new RuntimeException("Error setting camera preview to " +
-                    "texture.");
-        }
+    /**
+     * Initializes the preview view for the camera.
+     */
+    private void cameraPreviewSetup() {
+        cameraPreview = new CameraPreview(activity, camera);
+        FrameLayout preview = (FrameLayout) activity.findViewById(R.id
+                .camera_preview);
+        preview.addView(cameraPreview);
     }
 
+    /**
+     * Used to by the GLCamView to update the preview view.
+     */
     public void updatePreview() {
         previewSize = camera.getParameters().getPreviewSize();
         Camera.Parameters param = camera.getParameters();
@@ -87,7 +92,7 @@ public class CameraRecorder {
             mediaRecorder.reset();   // clear recorder configuration
             mediaRecorder.release(); // release the recorder object
             mediaRecorder = null;
-            camera.lock();
+            Log.i(LOG_TAG, "Media resources released.");
         }
     }
 
@@ -97,7 +102,23 @@ public class CameraRecorder {
             camera.stopPreview();
             camera.release();
             camera = null;
+            Log.i(LOG_TAG, "Camera resources released.");
         }
+    }
+
+    /**
+     * Google code: A safe way to get an instance of the Camera object.
+     *
+     * @return A reference to the available device camera
+     */
+    private static Camera getCameraInstance() {
+        Camera c = null;
+        try {
+            c = Camera.open(); // attempt to get a Camera instance
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Failed to access the system camera.");
+        }
+        return c; // returns null if camera is unavailable
     }
 
     /**
@@ -109,18 +130,15 @@ public class CameraRecorder {
         mediaRecorder.setCamera(camera);
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-//        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-//        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-//        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
         mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile
                 .QUALITY_HIGH));
         Log.i(LOG_TAG, "Camera configurations are set.");
         // Internal Directory
-//        File filesDir = activity.getDir("files", Context
+//        File filesDir = activity.getDir(FILE_DIRECTORY, Context
 //                .MODE_WORLD_READABLE);
         //External directory
         File filesDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "Tracker_Camera");
+                Environment.DIRECTORY_PICTURES), FILE_DIRECTORY);
         if (!filesDir.exists()) {
             filesDir.mkdir();
         }
