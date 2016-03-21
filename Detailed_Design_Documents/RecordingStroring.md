@@ -34,7 +34,7 @@ John Qualls
 ![](https://media.taiga.io/attachments/5/2/d/7/03121b952246afef543262545d1494c2f656beb8e6ebc85dd5d428cf404c/recording_storing_dialog.png) 
 
 ## 3.2 Model Component
-**File Directory** - The recorded files will be added to the *activity.getDir(FILE_DIRECTORY, Context.MODE_WORLD_READABLE);* directory if an external SD card does not exist, otherwise, the *Environment.DIRECTORY_PICTURES* will be used. A sub directory named tracker_camera will be created to help separate other app videos.
+**File Directory** - The recorded files will be added to the *activity.getDir(FILE_DIRECTORY, Context.MODE_WORLD_READABLE);* directory if an external SD card does not exist, otherwise, the *Environment.DIRECTORY_PICTURES* will be used. A sub directory named Tracker_Camera will be created to help separate other app videos.
 
 ## 3.3 Controller Component
 **CameraRecorder.java** - This class will be used to provide an object that will handle all of the functions associated with the video camera.

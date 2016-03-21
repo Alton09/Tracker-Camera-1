@@ -1,65 +1,26 @@
 package com.ninjapiratestudios.trackercamera;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.graphics.SurfaceTexture;
-import android.hardware.Camera;
-import android.media.CamcorderProfile;
-import android.media.MediaRecorder;
-import android.os.Environment;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.TextureView;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class VideoActivity extends Activity { // implements TextureView
-    // .SurfaceTextureListener{
-    private CameraRecorder cameraRecorder;
     public final static String LOG_TAG = "VIDEO_ACTIVITY";
-    private Camera camera;
-    private CameraPreview cameraPreview;
-    //CamPreview camPreview;
-    GLCamView glCamView;
-    MediaRecorder mediaRecorder;
-    Overlay overlay;
-
-    //buttons
-    Button recordButton;
+    private CameraRecorder cameraRecorder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Use CameraRecorder reference to handle camera functionality
-        cameraRecorder = new CameraRecorder(this,
-                cameraPreview);
+        // Instantiate CameraRecorder for future camera use
+        cameraRecorder = CameraRecorder.newInstance(this);
 
+        // When record button is clicked
         recordButtonListenerTemp();
     }
 

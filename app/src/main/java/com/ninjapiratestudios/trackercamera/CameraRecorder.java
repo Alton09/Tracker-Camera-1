@@ -32,34 +32,23 @@ public class CameraRecorder {
     private Camera.Size previewSize;
     private SurfaceTexture surfaceTexture;
 
-    public CameraRecorder(VideoActivity activity, CameraPreview cameraPreview) {
-        this.activity = activity;
-        this.cameraPreview = cameraPreview;
-
-        // Get camera reference and start camera preview
-
-    }
-
     /**
-     * Initializes the preview view for the camera.
+     * Static factory method that gets a reference to the camera, and sets up the
+     * camera preview.
+     *
+     * @param activity The activity used to access the camera and view
+     *                 components.
+     * @return A new instance of this class, or null if there was an error.
      */
-    private void cameraPreviewSetup() {
-        cameraPreview = new CameraPreview(activity, camera);
-        FrameLayout preview = (FrameLayout) activity.findViewById(R.id
-                .camera_preview);
-        preview.addView(cameraPreview);
-    }
-
-    /**
-     * Used to by the GLCamView to update the preview view.
-     */
-    public void updatePreview() {
-        previewSize = camera.getParameters().getPreviewSize();
-        Camera.Parameters param = camera.getParameters();
-        param.setPictureSize(previewSize.width, previewSize.height);
-        param.set("orientation", "landscape");
-        camera.setParameters(param);
-        camera.startPreview();
+    public static CameraRecorder newInstance(VideoActivity activity) {
+        CameraRecorder cameraRecorder = new CameraRecorder();
+        cameraRecorder.activity = activity;
+        cameraRecorder.camera = getCameraInstance();
+        if(cameraRecorder.camera == null) {
+            return null;
+        }
+        cameraRecorder.cameraPreviewSetup();
+        return cameraRecorder;
     }
 
     /**
@@ -74,6 +63,7 @@ public class CameraRecorder {
      * Starts Camera recording.
      */
     public void startRecording() {
+        setupCamera();
         mediaRecorder.start();
     }
 
@@ -107,26 +97,10 @@ public class CameraRecorder {
     }
 
     /**
-     * Google code: A safe way to get an instance of the Camera object.
-     *
-     * @return A reference to the available device camera
-     */
-    private static Camera getCameraInstance() {
-        Camera c = null;
-        try {
-            c = Camera.open(); // attempt to get a Camera instance
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "Failed to access the system camera.");
-        }
-        return c; // returns null if camera is unavailable
-    }
-
-    /**
      * Prepares the camera for recording
      */
-    public void setupCamera() {
+    private void setupCamera() {
         mediaRecorder = new MediaRecorder();
-        camera.unlock();
         mediaRecorder.setCamera(camera);
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
@@ -169,5 +143,33 @@ public class CameraRecorder {
 
     public Camera.Size getPreviewSize() {
         return previewSize;
+    }
+
+    /**
+     * A safe way to get an instance of the Camera object.
+     * reference:http://developer.android.com/guide/topics/media/camera
+     * .html#access-camera
+     *
+     * @return A reference to the device Camera, null if there was an error.
+     */
+    private static Camera getCameraInstance() {
+        Camera c = null;
+        try {
+            c = Camera.open(); // attempt to get a Camera instance
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Camera is not available (in use or does not " +
+                    "exist)");
+        }
+        return c; // returns null if camera is unavailable
+    }
+
+    /**
+     * Initializes the preview view for the camera.
+     */
+    private void cameraPreviewSetup() {
+        cameraPreview = new CameraPreview(activity, camera);
+        FrameLayout preview = (FrameLayout) activity.findViewById(R.id
+                .camera_preview);
+        preview.addView(cameraPreview);
     }
 }

@@ -14,4 +14,5 @@ public class BaseTest {
             " or there was an error while executing the test: ";
     protected final String UNIT_TEST_BEFORE_ERROR = "Error in @Before setup " +
             "method: ";
+    protected final String EXPECTED_EXCEPTION = "Expected test exception";
 }

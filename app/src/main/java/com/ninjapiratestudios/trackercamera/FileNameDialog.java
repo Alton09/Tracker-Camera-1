@@ -1,22 +1,10 @@
 package com.ninjapiratestudios.trackercamera;
 
-import android.app.AlertDialog;
 import android.app.DialogFragment;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.app.Dialog;
-import android.os.Environment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 
 /**
  * Handles all of the functionality for the DialogFragment used to get the user
@@ -40,9 +28,9 @@ public class FileNameDialog extends DialogFragment {
      * @return A new instance of this class.
      */
     public static FileNameDialog newInstance(CameraRecorder cameraRecorder) {
-        FileNameDialog newObj = new FileNameDialog();
-        newObj.setCameraRecorder(cameraRecorder);
-        return newObj;
+        FileNameDialog fileNameDialog = new FileNameDialog();
+        fileNameDialog.cameraRecorder = cameraRecorder;
+        return fileNameDialog;
     }
 
     /**
@@ -86,10 +74,6 @@ public class FileNameDialog extends DialogFragment {
         return v;
     }
 
-    private void setCameraRecorder(CameraRecorder cameraRecorder) {
-        this.cameraRecorder = cameraRecorder;
-    }
-
     /**
      * Handles all the save and cancel button actions for this dialog
      */
@@ -103,7 +87,6 @@ public class FileNameDialog extends DialogFragment {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.fn_dialog_save_button) {
-                cameraRecorder.setupCamera();
                 cameraRecorder.startRecording();
             } else {
                 cameraRecorder.stopRecording();
