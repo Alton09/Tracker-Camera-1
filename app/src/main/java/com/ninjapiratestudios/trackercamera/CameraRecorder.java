@@ -1,19 +1,14 @@
 package com.ninjapiratestudios.trackercamera;
 
-import android.content.Context;
-import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.util.Log;
-import android.view.Surface;
 import android.widget.FrameLayout;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * This class will be used to provide an object that will handle all
@@ -29,11 +24,11 @@ public class CameraRecorder {
     private CameraPreview cameraPreview;
     private MediaRecorder mediaRecorder;
     private VideoActivity activity;
-    private Camera.Size previewSize;
-    private SurfaceTexture surfaceTexture;
+    private String fileName;
 
     /**
-     * Static factory method that gets a reference to the camera, and sets up the
+     * Static factory method that gets a reference to the camera, and sets up
+     * the
      * camera preview.
      *
      * @param activity The activity used to access the camera and view
@@ -44,7 +39,7 @@ public class CameraRecorder {
         CameraRecorder cameraRecorder = new CameraRecorder();
         cameraRecorder.activity = activity;
         cameraRecorder.camera = getCameraInstance();
-        if(cameraRecorder.camera == null) {
+        if (cameraRecorder.camera == null) {
             return null;
         }
         cameraRecorder.cameraPreviewSetup();
@@ -63,8 +58,16 @@ public class CameraRecorder {
      * Starts Camera recording.
      */
     public void startRecording() {
-        setupCamera();
-        mediaRecorder.start();
+        try {
+            camera.unlock();
+            setupCamera();
+            mediaRecorder.start();
+            Log.i(LOG_TAG, "Camera recording started");
+        } catch (Exception e) {
+            // TODO Provide graceful app exit in future iteration
+            Log.i(LOG_TAG, "Exiting application due to camera setup error.");
+            activity.finish();
+        }
     }
 
     /**
@@ -73,6 +76,8 @@ public class CameraRecorder {
     public void stopRecording() {
         mediaRecorder.stop();
         releaseMediaResource();
+        camera.lock();
+        Log.i(LOG_TAG, "Camera recording stopped.");
     }
 
     public void releaseMediaResource() {
@@ -89,6 +94,7 @@ public class CameraRecorder {
     public void releaseCameraResource() {
         // Release the camera for other applications
         if (camera != null) {
+            camera.lock();
             camera.stopPreview();
             camera.release();
             camera = null;
@@ -97,9 +103,26 @@ public class CameraRecorder {
     }
 
     /**
-     * Prepares the camera for recording
+     * Sets the filename field used to name the user's video file.
+     *
+     * @param fileName The file name.
      */
-    private void setupCamera() {
+    public void setFileName(String fileName) {
+        if (fileName != null) {
+            this.fileName = fileName;
+        } else {
+            this.fileName = "trackerCamera";
+        }
+    }
+
+    /**
+     * Prepares the camera for recording
+     *
+     * @throws Exception If there was an error setting up configurations for
+     *                   the camera.
+     */
+    private void setupCamera() throws Exception {
+        // Setup camera configurations for video recording
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setCamera(camera);
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
@@ -107,17 +130,10 @@ public class CameraRecorder {
         mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile
                 .QUALITY_HIGH));
         Log.i(LOG_TAG, "Camera configurations are set.");
-        // Internal Directory
-//        File filesDir = activity.getDir(FILE_DIRECTORY, Context
-//                .MODE_WORLD_READABLE);
-        //External directory
-        File filesDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), FILE_DIRECTORY);
-        if (!filesDir.exists()) {
-            filesDir.mkdir();
-        }
 
-        File videoFile = new File(filesDir.getPath(), "TestVideo.mp4");
+        // Create a new video file
+        File filesDir = retrieveFileDirectory();
+        File videoFile = new File(filesDir.getPath(), fileName + ".mp4");
         mediaRecorder.setOutputFile(videoFile.toString());
         mediaRecorder.setVideoSize(cameraPreview.getWidth(), cameraPreview
                 .getHeight());
@@ -127,22 +143,17 @@ public class CameraRecorder {
         try {
             mediaRecorder.prepare();
         } catch (IllegalStateException e) {
-            Log.d(LOG_TAG, "IllegalStateException preparing MediaRecorder: " + e
+            Log.e(LOG_TAG, "IllegalStateException preparing MediaRecorder: " + e
                     .getMessage());
-            mediaRecorder.release();
-            return;
+            releaseMediaResource();
+            throw new IllegalStateException(e.getMessage());
         } catch (IOException e) {
-            Log.d(LOG_TAG, "IOException preparing MediaRecorder: " + e
-                    .getMessage
-                            ());
-            mediaRecorder.release();
-            return;
+            Log.e(LOG_TAG, "IOException preparing MediaRecorder: " + e
+                    .getMessage());
+            releaseMediaResource();
+            throw new IOException(e.getMessage());
         }
         Log.i(LOG_TAG, "Camera successfully configured");
-    }
-
-    public Camera.Size getPreviewSize() {
-        return previewSize;
     }
 
     /**
@@ -164,6 +175,21 @@ public class CameraRecorder {
     }
 
     /**
+     * Retrieves the sdcard/pictures/Tracker_Camera directory. If the
+     * Tracker_Camera does not exist, it is created.
+     *
+     * @return sdcard/pictures/Tracker_Camera as a File object.
+     */
+    private File retrieveFileDirectory() {
+        File filesDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), FILE_DIRECTORY);
+        if (!filesDir.exists()) {
+            filesDir.mkdir();
+        }
+        return filesDir;
+    }
+
+    /**
      * Initializes the preview view for the camera.
      */
     private void cameraPreviewSetup() {
@@ -171,5 +197,6 @@ public class CameraRecorder {
         FrameLayout preview = (FrameLayout) activity.findViewById(R.id
                 .camera_preview);
         preview.addView(cameraPreview);
+        Log.i(LOG_TAG, "Camera preview setup successful.");
     }
 }

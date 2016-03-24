@@ -2,9 +2,12 @@ package com.ninjapiratestudios.trackercamera;
 
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 /**
  * Handles all of the functionality for the DialogFragment used to get the user
@@ -16,8 +19,11 @@ import android.view.ViewGroup;
 public class FileNameDialog extends DialogFragment {
     // Fragment tag name For FragmentManager
     public final static String LOG_TAG = "FILE_NAME_DIALOG";
+    public final static int MAX_FILE_NAME_SIZE = 251;
     protected final static String FRAGMENT_TAG = "DIALOG_FRAGMENT";
+    private EditText editText;
     private CameraRecorder cameraRecorder;
+    private boolean recording;
 
 
     /**
@@ -71,7 +77,41 @@ public class FileNameDialog extends DialogFragment {
         v.findViewById(R.id.fn_dialog_cancel_button).setOnClickListener
                 (new ButtonClick());
 
+        // Get reference to EditText
+        editText = (EditText) v.findViewById(R.id.fn_dialog_file_name);
+
         return v;
+    }
+
+    /**
+     * Validates a file name for the Android filesystem.
+     *
+     * @param fileName The file name to validate.
+     * @return Whether or not the file name is valid.
+     */
+    private boolean fileNameValidation(String fileName) {
+        // Validate max size
+        if (fileName.length() > MAX_FILE_NAME_SIZE) {
+            Toast.makeText(getActivity(), "File Name Too Long.", Toast
+                    .LENGTH_LONG).show();
+            return false;
+        }
+
+        // Validate empty string
+        if (fileName.isEmpty()) {
+            Toast.makeText(getActivity(), "Empty File Name.", Toast
+                    .LENGTH_LONG).show();
+            return false;
+        }
+
+        // Validate / character
+        if (fileName.length() == 1 && fileName.charAt(0) == '/') {
+            Toast.makeText(getActivity(), "More than '/' is needed", Toast
+                    .LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -87,9 +127,29 @@ public class FileNameDialog extends DialogFragment {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.fn_dialog_save_button) {
-                cameraRecorder.startRecording();
-            } else {
-                cameraRecorder.stopRecording();
+                // Save was clicked
+                if (!recording) {
+                    // Validate filename
+                    String fileName = editText.getText().toString();
+                    if (fileNameValidation(fileName)) {
+                        // Begin recording
+                        cameraRecorder.setFileName(fileName);
+                        recording = true;
+                        cameraRecorder.startRecording();
+                    }
+                } else {
+                    Log.i(LOG_TAG, "Camera is already recording, " +
+                            "cannot begin recording.");
+                }
+            } else { // Cancel was clicked
+                // TODO Put stop functionality inside Jalen's toggle button
+                if (recording) {
+                    recording = false;
+                    cameraRecorder.stopRecording();
+                } else {
+                    Log.i(LOG_TAG, "Camera is currently not recording, and " +
+                            "cannot be stopped.");
+                }
             }
         }
     }

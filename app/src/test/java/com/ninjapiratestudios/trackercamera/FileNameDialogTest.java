@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.ninjapiratestudios.trackercamera.FileNameDialog.ButtonClick;
 
@@ -15,13 +16,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
-import static org.mockito.Mockito.times;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.times;
 
 /**
  * Unit tests for FileNameDialog.java.
@@ -99,7 +100,13 @@ public class FileNameDialogTest extends BaseTest {
         try {
             Mockito.when(inflater.inflate(anyInt(), any(ViewGroup.class),
                     anyBoolean())).thenReturn(view);
-            Mockito.when(view.findViewById(anyInt())).thenReturn(view);
+            Mockito.when(view.findViewById(R.id.fn_dialog_save_button))
+                    .thenReturn(view);
+            Mockito.when(view.findViewById(R.id.fn_dialog_cancel_button))
+                    .thenReturn(view);
+            // Just return dummy EditText for test to work
+            Mockito.when(view.findViewById(R.id.fn_dialog_file_name))
+                    .thenReturn(Mockito.mock(EditText.class));
             PowerMockito.whenNew(ButtonClick.class)
                     .withNoArguments().thenReturn(listener);
         } catch (Exception e) {

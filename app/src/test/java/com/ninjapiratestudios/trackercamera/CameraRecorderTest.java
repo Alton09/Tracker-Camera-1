@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.hardware.Camera;
+import android.media.MediaRecorder;
+import android.util.Log;
 
 import junit.framework.Assert;
 
@@ -25,7 +27,8 @@ import java.io.File;
  * @author John Qualls
  * @version 3/21/2016
  */
-@PrepareForTest({CameraRecorder.class, Camera.class, FileNameDialog.class})
+@PrepareForTest({CameraRecorder.class, Camera.class, FileNameDialog.class,
+        Log.class})
 @RunWith(PowerMockRunner.class)
 public class CameraRecorderTest extends BaseTest {
     private enum TestName {
@@ -88,6 +91,39 @@ public class CameraRecorderTest extends BaseTest {
             Assert.fail(UNIT_TEST_EXECUTE_ERROR + e.getMessage());
         }
     }
+
+    @Test
+    public void startRecordingTest() {
+        MediaRecorder mrMock = Mockito.mock(MediaRecorder.class);
+        Camera cameraMock = Mockito.mock(Camera.class);
+        // Test setup
+        try {
+            Whitebox.setInternalState(cameraRecorder, "camera", cameraMock);
+            PowerMockito.doNothing().when(cameraRecorder, "setupCamera");
+            Whitebox.setInternalState(cameraRecorder, "mediaRecorder", mrMock);
+            PowerMockito.mockStatic(Log.class);
+        } catch (Exception e) {
+            Assert.fail(UNIT_TEST_SETUP_ERROR + e.getMessage());
+        }
+
+        // Execute SUT
+        try {
+            cameraRecorder.startRecording();
+        } catch (Exception e) {
+            Assert.fail(UNIT_TEST_SUT_ERROR + e.getMessage());
+        }
+
+        // Execute test
+        try {
+            Mockito.verify(cameraMock).unlock();
+            PowerMockito.verifyPrivate(cameraRecorder).invoke
+                    ("setupCamera");
+            Mockito.verify(mrMock).start();
+        } catch (Exception e) {
+            Assert.fail(UNIT_TEST_EXECUTE_ERROR + e.getMessage());
+        }
+    }
+
 
     private void staticFactoryMethodTestHelper(TestName testName) {
         CameraRecorder actualInstance = null;
