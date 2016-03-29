@@ -105,8 +105,8 @@ public class FileNameDialog extends DialogFragment {
         }
 
         // Validate / character
-        if (fileName.length() == 1 && fileName.charAt(0) == '/') {
-            Toast.makeText(getActivity(), "More than '/' is needed", Toast
+        if (fileName.contains("/")) {
+            Toast.makeText(getActivity(), "/ is an invalid character", Toast
                     .LENGTH_LONG).show();
             return false;
         }

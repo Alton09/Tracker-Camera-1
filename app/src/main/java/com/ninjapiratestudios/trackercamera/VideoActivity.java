@@ -17,6 +17,11 @@ public class VideoActivity extends Activity { // implements TextureView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         // Prepare camera and OpenGL
         initializeCameraRecorder();
@@ -30,6 +35,9 @@ public class VideoActivity extends Activity { // implements TextureView
         super.onPostCreate(savedInstanceState);
     }
 
+    /**
+     * Release resources and end current processing.
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -45,6 +53,7 @@ public class VideoActivity extends Activity { // implements TextureView
     /**
      * Initializes the CameraRecorder class that is necessary for video
      * recording and OpenGL functionality.
+     *
      */
     private void initializeCameraRecorder() {
         while (cameraRecorder == null) {
